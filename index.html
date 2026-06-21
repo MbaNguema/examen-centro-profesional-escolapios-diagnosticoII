@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>EXAMEN DE DIAGNÓSTICO II</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --accent: #f59e0b;
+            --text: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+        }
+
+        .pregunta {
+            margin-bottom: 20px;
+            background: #0f172a;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        input,
+        textarea {
+            width: 95%;
+            margin-top: 10px;
+            padding: 10px;
+            background: #1e293b;
+            border: 1px solid #475569;
+            color: white;
+            border-radius: 4px;
+        }
+
+        button.send {
+            background: #d97706;
+            color: white;
+            border: none;
+            padding: 15px;
+            width: 100%;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 6px;
+            display: block;
+        }
+
+        .datos-alumno {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #334155;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1 style="text-align: center;">EXAMEN DE DIAGNÓSTICO II</h1>
+
+        <form id="examenForm">
+            <div class="datos-alumno">
+                <label>Nombre del Alumno:</label>
+                <input type="text" name="nombre_alumno" required>
+                <label style="margin-top:10px; display:block;">Fecha:</label>
+                <input type="date" name="fecha_examen" required>
+            </div>
+
+            <div id="diagnostico">
+                <div class="pregunta"><label>1. ¿Qué síntoma físico presenta una PC si la batería CMOS está
+                        agotada?</label><input type="text" name="d1"></div>
+                <div class="pregunta"><label>2. ¿Qué pines mediría en una fuente ATX para verificar los 12V y
+                        5V?</label><textarea name="d2"></textarea></div>
+                <div class="pregunta"><label>3. Pasos de mantenimiento físico para memoria RAM ante una
+                        BSOD.</label><textarea name="d3"></textarea></div>
+                <div class="pregunta"><label>4. Escriba un script .bat (ipconfig, ping 8.8.8.8, ping google.com,
+                        pause).</label><textarea name="d4"></textarea></div>
+                <div class="pregunta"><label>5. ¿Qué debe incluir un informe técnico tras una
+                        reparación?</label><textarea name="d5"></textarea></div>
+                <div class="pregunta"><label>6. Explique la diferencia entre un disco duro HDD y un SSD en términos de
+                        rendimiento.</label><textarea name="d6"></textarea></div>
+                <div class="pregunta"><label>7. ¿Para qué sirve el comando 'chkdsk' en Windows?</label><input
+                        type="text" name="d7"></div>
+                <div class="pregunta"><label>8. ¿Qué es el POST en el proceso de arranque de una
+                        computadora?</label><textarea name="d8"></textarea></div>
+                <div class="pregunta"><label>9. Pasos para identificar si un problema de red es físico o
+                        lógico.</label><textarea name="d9"></textarea></div>
+                <div class="pregunta"><label>10. ¿Qué medida de seguridad se debe tomar antes de manipular componentes
+                        internos de una PC?</label><input type="text" name="d10"></div>
+            </div>
+
+            <button type="button" id="btnEnviar" class="send" onclick="enviarResultados()">Finalizar y Enviar
+                Resultados</button>
+        </form>
+    </div>
+
+    <script>
+        async function enviarResultados() {
+            const btn = document.getElementById('btnEnviar');
+            const form = document.getElementById('examenForm');
+            const formData = new FormData(form);
+
+            btn.innerText = "Enviando respuestas...";
+            btn.disabled = true;
+
+            const nombre = formData.get('nombre_alumno');
+            const fecha = formData.get('fecha_examen');
+
+            const preguntas = [
+                { id: 'd1', texto: "1. ¿Qué síntoma físico presenta una PC si la batería CMOS está agotada?" },
+                { id: 'd2', texto: "2. ¿Qué pines mediría en una fuente ATX para verificar los 12V y 5V?" },
+                { id: 'd3', texto: "3. Pasos de mantenimiento físico para memoria RAM ante una BSOD." },
+                { id: 'd4', texto: "4. Escriba un script .bat (ipconfig, ping 8.8.8.8, ping google.com, pause)." },
+                { id: 'd5', texto: "5. ¿Qué debe incluir un informe técnico tras una reparación?" },
+                { id: 'd6', texto: "6. Explique la diferencia entre un disco duro HDD y un SSD en términos de rendimiento." },
+                { id: 'd7', texto: "7. ¿Para qué sirve el comando 'chkdsk' en Windows?" },
+                { id: 'd8', texto: "8. ¿Qué es el POST en el proceso de arranque de una computadora?" },
+                { id: 'd9', texto: "9. Pasos para identificar si un problema de red es físico o lógico." },
+                { id: 'd10', texto: "10. ¿Qué medida de seguridad se debe tomar antes de manipular componentes internos de una PC?" }
+            ];
+
+            try {
+                for (const p of preguntas) {
+                    const params = new URLSearchParams({
+                        nombre_alumno: nombre,
+                        fecha_examen: fecha,
+                        pregunta: p.texto,
+                        respuesta: formData.get(p.id) || "En blanco"
+                    });
+
+                    await fetch("TU_URL_DEL_SCRIPT_AQUI", {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: params
+                    });
+                }
+                alert("¡Examen de Diagnóstico enviado!");
+                form.reset();
+            } catch (e) {
+                alert("Error: " + e.message);
+            } finally {
+                btn.innerText = "Finalizar y Enviar Resultados";
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>
