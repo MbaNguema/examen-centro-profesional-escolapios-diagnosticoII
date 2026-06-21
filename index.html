@@ -75,6 +75,8 @@
         <h1 style="text-align: center;">EXAMEN DE DIAGNÓSTICO II</h1>
 
         <form id="examenForm">
+            <input type="hidden" name="tipo_examen" value="Diagnostico">
+
             <div class="datos-alumno">
                 <label>Nombre del Alumno:</label>
                 <input type="text" name="nombre_alumno" required>
@@ -83,30 +85,19 @@
             </div>
 
             <div id="diagnostico">
-                <div class="pregunta"><label>1. ¿Qué síntoma físico presenta una PC si la batería CMOS está
-                        agotada?</label><input type="text" name="d1"></div>
-                <div class="pregunta"><label>2. ¿Qué pines mediría en una fuente ATX para verificar los 12V y
-                        5V?</label><textarea name="d2"></textarea></div>
-                <div class="pregunta"><label>3. Pasos de mantenimiento físico para memoria RAM ante una
-                        BSOD.</label><textarea name="d3"></textarea></div>
-                <div class="pregunta"><label>4. Escriba un script .bat (ipconfig, ping 8.8.8.8, ping google.com,
-                        pause).</label><textarea name="d4"></textarea></div>
-                <div class="pregunta"><label>5. ¿Qué debe incluir un informe técnico tras una
-                        reparación?</label><textarea name="d5"></textarea></div>
-                <div class="pregunta"><label>6. Explique la diferencia entre un disco duro HDD y un SSD en términos de
-                        rendimiento.</label><textarea name="d6"></textarea></div>
-                <div class="pregunta"><label>7. ¿Para qué sirve el comando 'chkdsk' en Windows?</label><input
-                        type="text" name="d7"></div>
-                <div class="pregunta"><label>8. ¿Qué es el POST en el proceso de arranque de una
-                        computadora?</label><textarea name="d8"></textarea></div>
-                <div class="pregunta"><label>9. Pasos para identificar si un problema de red es físico o
-                        lógico.</label><textarea name="d9"></textarea></div>
-                <div class="pregunta"><label>10. ¿Qué medida de seguridad se debe tomar antes de manipular componentes
-                        internos de una PC?</label><input type="text" name="d10"></div>
+                <div class="pregunta"><label>1. ¿Qué síntoma físico presenta una PC si la batería CMOS está agotada?</label><input type="text" name="d1"></div>
+                <div class="pregunta"><label>2. ¿Qué pines mediría en una fuente ATX para verificar los 12V y 5V?</label><textarea name="d2"></textarea></div>
+                <div class="pregunta"><label>3. Pasos de mantenimiento físico para memoria RAM ante una BSOD.</label><textarea name="d3"></textarea></div>
+                <div class="pregunta"><label>4. Escriba un script .bat (ipconfig, ping 8.8.8.8, ping google.com, pause).</label><textarea name="d4"></textarea></div>
+                <div class="pregunta"><label>5. ¿Qué debe incluir un informe técnico tras una reparación?</label><textarea name="d5"></textarea></div>
+                <div class="pregunta"><label>6. Explique la diferencia entre un disco duro HDD y un SSD en términos de rendimiento.</label><textarea name="d6"></textarea></div>
+                <div class="pregunta"><label>7. ¿Para qué sirve el comando 'chkdsk' en Windows?</label><input type="text" name="d7"></div>
+                <div class="pregunta"><label>8. ¿Qué es el POST en el proceso de arranque de una computadora?</label><textarea name="d8"></textarea></div>
+                <div class="pregunta"><label>9. Pasos para identificar si un problema de red es físico o lógico.</label><textarea name="d9"></textarea></div>
+                <div class="pregunta"><label>10. ¿Qué medida de seguridad se debe tomar antes de manipular componentes internos de una PC?</label><input type="text" name="d10"></div>
             </div>
 
-            <button type="button" id="btnEnviar" class="send" onclick="enviarResultados()">Finalizar y Enviar
-                Resultados</button>
+            <button type="button" id="btnEnviar" class="send" onclick="enviarResultados()">Finalizar y Enviar Resultados</button>
         </form>
     </div>
 
@@ -121,6 +112,7 @@
 
             const nombre = formData.get('nombre_alumno');
             const fecha = formData.get('fecha_examen');
+            const tipoExamen = formData.get('tipo_examen');
 
             const preguntas = [
                 { id: 'd1', texto: "1. ¿Qué síntoma físico presenta una PC si la batería CMOS está agotada?" },
@@ -140,6 +132,7 @@
                     const params = new URLSearchParams({
                         nombre_alumno: nombre,
                         fecha_examen: fecha,
+                        tipo_examen: tipoExamen,
                         pregunta: p.texto,
                         respuesta: formData.get(p.id) || "En blanco"
                     });
@@ -162,5 +155,4 @@
         }
     </script>
 </body>
-
 </html>
