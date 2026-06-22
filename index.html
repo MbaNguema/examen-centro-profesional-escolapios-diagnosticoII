@@ -5,67 +5,15 @@
     <meta charset="UTF-8">
     <title>EXAMEN DE DIAGNÓSTICO II</title>
     <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --accent: #f59e0b;
-            --text: #e2e8f0;
-        }
-
-        body {
-            background-color: var(--bg);
-            color: var(--text);
-            font-family: 'Segoe UI', sans-serif;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            background: var(--card);
-            padding: 30px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-        }
-
-        .pregunta {
-            margin-bottom: 20px;
-            background: #0f172a;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid var(--accent);
-        }
-
-        input,
-        textarea {
-            width: 95%;
-            margin-top: 10px;
-            padding: 10px;
-            background: #1e293b;
-            border: 1px solid #475569;
-            color: white;
-            border-radius: 4px;
-        }
-
-        button.send {
-            background: #d97706;
-            color: white;
-            border: none;
-            padding: 15px;
-            width: 100%;
-            margin-top: 20px;
-            cursor: pointer;
-            font-size: 16px;
-            border-radius: 6px;
-            display: block;
-        }
-
-        .datos-alumno {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #334155;
-            border-radius: 8px;
-        }
+        :root { --bg: #0f172a; --card: #1e293b; --accent: #f59e0b; --text: #e2e8f0; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: var(--card); padding: 30px; border-radius: 12px; border: 1px solid #334155; }
+        #timer { text-align: center; font-size: 20px; color: var(--accent); margin-bottom: 20px; font-weight: bold; }
+        .pregunta { margin-bottom: 20px; background: #0f172a; padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent); }
+        input, textarea { width: 95%; margin-top: 10px; padding: 10px; background: #1e293b; border: 1px solid #475569; color: white; border-radius: 4px; }
+        button.send { background: #d97706; color: white; border: none; padding: 15px; width: 100%; margin-top: 20px; cursor: pointer; font-size: 16px; border-radius: 6px; }
+        button.send:disabled { background: #92400e; cursor: not-allowed; opacity: 0.7; }
+        .datos-alumno { margin-bottom: 20px; padding: 15px; background: #334155; border-radius: 8px; }
     </style>
 </head>
 
@@ -73,6 +21,7 @@
 
     <div class="container">
         <h1 style="text-align: center;">EXAMEN DE DIAGNÓSTICO II</h1>
+        <div id="timer">Cargando horario...</div>
 
         <form id="examenForm">
             <input type="hidden" name="tipo_examen" value="Diagnostico">
@@ -97,11 +46,37 @@
                 <div class="pregunta"><label>10. ¿Qué medida de seguridad se debe tomar antes de manipular componentes internos de una PC?</label><input type="text" name="d10"></div>
             </div>
 
-            <button type="button" id="btnEnviar" class="send" onclick="enviarResultados()">Finalizar y Enviar Resultados</button>
+            <button type="button" id="btnEnviar" class="send" onclick="enviarResultados()" disabled>Finalizar y Enviar Resultados</button>
         </form>
     </div>
 
     <script>
+        // Configuración para hoy 22 de junio de 2026, de 18:20 a 19:00
+        const horaInicio = new Date("2026-06-22T18:20:00").getTime();
+        const horaFin = new Date("2026-06-22T19:00:00").getTime();
+
+        const timerDisplay = document.getElementById('timer');
+        const btn = document.getElementById('btnEnviar');
+
+        const x = setInterval(function() {
+            const ahora = new Date().getTime();
+            const distancia = horaFin - ahora;
+
+            if (ahora < horaInicio) {
+                timerDisplay.innerHTML = "El examen comienza a las 18:20";
+                btn.disabled = true;
+            } else if (distancia < 0) {
+                clearInterval(x);
+                timerDisplay.innerHTML = "TIEMPO FINALIZADO";
+                btn.disabled = true;
+            } else {
+                const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+                const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+                timerDisplay.innerHTML = "Tiempo restante: " + minutos + "m " + segundos + "s ";
+                btn.disabled = false;
+            }
+        }, 1000);
+
         async function enviarResultados() {
             const btn = document.getElementById('btnEnviar');
             const form = document.getElementById('examenForm');
