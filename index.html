@@ -18,15 +18,13 @@
 <body>
     <div class="container">
         <h1 style="text-align: center;">EXAMEN DE RECUPERACIÓN</h1>
-        <div id="timer">Cargando horario...</div>
+        <div id="timer">Cargando tiempo...</div>
 
         <form id="examenForm">
             <input type="hidden" name="tipo_examen" value="Diagnostico">
             <div class="datos-alumno">
-                <label>Nombre del Alumno:</label>
-                <input type="text" name="nombre_alumno" required>
-                <label style="margin-top:10px; display:block;">Fecha:</label>
-                <input type="date" name="fecha_examen" required>
+                <label>Nombre del Alumno:</label> <input type="text" name="nombre_alumno" required>
+                <label style="margin-top:10px; display:block;">Fecha:</label> <input type="date" name="fecha_examen" required>
             </div>
 
             <div id="diagnostico">
@@ -47,6 +45,7 @@
     </div>
 
     <script>
+        // Configuración de horario: 6:30 a 8:00 del 23 de junio de 2026
         const horaInicio = new Date("2026-06-23T06:30:00").getTime();
         const horaFin = new Date("2026-06-23T08:00:00").getTime();
 
@@ -56,13 +55,18 @@
         const x = setInterval(function() {
             const ahora = new Date().getTime();
             const distancia = horaFin - ahora;
-            if (ahora < horaInicio) { timerDisplay.innerHTML = "El examen comienza a las 6:30"; btn.disabled = true; }
-            else if (distancia < 0) { clearInterval(x); timerDisplay.innerHTML = "TIEMPO FINALIZADO"; btn.disabled = true; }
-            else {
-                const h = Math.floor(distancia / (1000 * 60 * 60));
+
+            if (ahora < horaInicio) {
+                timerDisplay.innerHTML = "El examen comienza a las 6:30";
+                btn.disabled = true;
+            } else if (distancia < 0) {
+                clearInterval(x);
+                timerDisplay.innerHTML = "TIEMPO FINALIZADO";
+                btn.disabled = true;
+            } else {
                 const m = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distancia % (1000 * 60)) / 1000);
-                timerDisplay.innerHTML = "Tiempo restante: " + h + "h " + m + "m " + s + "s ";
+                timerDisplay.innerHTML = "Tiempo restante: " + m + "m " + s + "s ";
                 btn.disabled = false;
             }
         }, 1000);
@@ -70,22 +74,23 @@
         async function enviarResultados() {
             const btn = document.getElementById('btnEnviar');
             const form = document.getElementById('examenForm');
+            const formData = new FormData(form);
             
-            // Crea un objeto con todos los datos del formulario
-            const datos = {};
-            new FormData(form).forEach((value, key) => { datos[key] = value; });
-
             btn.innerText = "Enviando respuestas...";
             btn.disabled = true;
 
             try {
+                // Envío unificado en un solo paquete
+                const params = new URLSearchParams(formData);
+
                 await fetch("https://script.google.com/macros/s/AKfycbyFBvbQr9MQuY_lL1-l5os30WzLzA9HlTqVNt_ShmKpJzTAcFPfNrUhcH_we0yeqErHPQ/exec", {
                     method: "POST",
                     mode: "no-cors",
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams(datos)
+                    body: params
                 });
-                alert("¡Examen de Recuperación enviado!");
+
+                alert("¡Examen de Recuperación enviado con éxito!");
                 form.reset();
             } catch (e) {
                 alert("Error al enviar: " + e.message);
