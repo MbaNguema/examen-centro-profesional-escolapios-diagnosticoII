@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <title>EXAMEN DE RECUPERACIÓN - DIAGNÓSTICO</title>
@@ -16,16 +15,13 @@
         .datos-alumno { margin-bottom: 20px; padding: 15px; background: #334155; border-radius: 8px; }
     </style>
 </head>
-
 <body>
-
     <div class="container">
         <h1 style="text-align: center;">EXAMEN DE RECUPERACIÓN</h1>
         <div id="timer">Cargando horario...</div>
 
         <form id="examenForm">
             <input type="hidden" name="tipo_examen" value="Diagnostico">
-
             <div class="datos-alumno">
                 <label>Nombre del Alumno:</label>
                 <input type="text" name="nombre_alumno" required>
@@ -51,7 +47,6 @@
     </div>
 
     <script>
-        // Configuración: 16:00 a 18:00 del 23 de junio de 2026
         const horaInicio = new Date("2026-06-23T06:30:00").getTime();
         const horaFin = new Date("2026-06-23T08:00:00").getTime();
 
@@ -61,15 +56,9 @@
         const x = setInterval(function() {
             const ahora = new Date().getTime();
             const distancia = horaFin - ahora;
-
-            if (ahora < horaInicio) {
-                timerDisplay.innerHTML = "El examen comienza a las 6:30";
-                btn.disabled = true;
-            } else if (distancia < 0) {
-                clearInterval(x);
-                timerDisplay.innerHTML = "TIEMPO FINALIZADO";
-                btn.disabled = true;
-            } else {
+            if (ahora < horaInicio) { timerDisplay.innerHTML = "El examen comienza a las 6:30"; btn.disabled = true; }
+            else if (distancia < 0) { clearInterval(x); timerDisplay.innerHTML = "TIEMPO FINALIZADO"; btn.disabled = true; }
+            else {
                 const h = Math.floor(distancia / (1000 * 60 * 60));
                 const m = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
                 const s = Math.floor((distancia % (1000 * 60)) / 1000);
@@ -81,49 +70,25 @@
         async function enviarResultados() {
             const btn = document.getElementById('btnEnviar');
             const form = document.getElementById('examenForm');
-            const formData = new FormData(form);
+            
+            // Crea un objeto con todos los datos del formulario
+            const datos = {};
+            new FormData(form).forEach((value, key) => { datos[key] = value; });
 
             btn.innerText = "Enviando respuestas...";
             btn.disabled = true;
 
-            const nombre = formData.get('nombre_alumno');
-            const fecha = formData.get('fecha_examen');
-            const tipoExamen = formData.get('tipo_examen');
-
-            const preguntas = [
-                { id: 'd1', texto: "1. Escala multímetro para 220V CA" },
-                { id: 'd2', texto: "2. Diferencia CA vs CC" },
-                { id: 'd3', texto: "3. Verificar continuidad cable" },
-                { id: 'd4', texto: "4. Acciones software PC lento" },
-                { id: 'd5', texto: "5. Hard Reset vs Factory Reset" },
-                { id: 'd6', texto: "6. Función sfc /scannow" },
-                { id: 'd7', texto: "7. Componente medir placa base" },
-                { id: 'd8', texto: "8. Precauciones medir fuente" },
-                { id: 'd9', texto: "9. Identificar falla de driver" },
-                { id: 'd10', texto: "10. Importancia descarga estática" }
-            ];
-
             try {
-                for (const p of preguntas) {
-                    const params = new URLSearchParams({
-                        nombre_alumno: nombre,
-                        fecha_examen: fecha,
-                        tipo_examen: tipoExamen,
-                        pregunta: p.texto,
-                        respuesta: formData.get(p.id) || "En blanco"
-                    });
-
-                    await fetch("https://script.google.com/macros/s/AKfycbyFBvbQr9MQuY_lL1-l5os30WzLzA9HlTqVNt_ShmKpJzTAcFPfNrUhcH_we0yeqErHPQ/exec", {
-                        method: "POST",
-                        mode: "no-cors",
-                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                        body: params
-                    });
-                }
+                await fetch("https://script.google.com/macros/s/AKfycbyFBvbQr9MQuY_lL1-l5os30WzLzA9HlTqVNt_ShmKpJzTAcFPfNrUhcH_we0yeqErHPQ/exec", {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(datos)
+                });
                 alert("¡Examen de Recuperación enviado!");
                 form.reset();
             } catch (e) {
-                alert("Error: " + e.message);
+                alert("Error al enviar: " + e.message);
             } finally {
                 btn.innerText = "Finalizar y Enviar Resultados";
                 btn.disabled = false;
